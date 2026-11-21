@@ -1,0 +1,51 @@
+package com.example.killaura;
+
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.Text;
+
+public class KillAuraScreen extends Screen {
+    private final KillAuraModule m = KillAuraMod.MODULE;
+
+    public KillAuraScreen() {
+        super(Text.literal("KillAura Ayarlari"));
+    }
+
+    @Override
+    protected void init() {
+        int x = width / 2 - 150;
+        int y = 40;
+        int gap = 22;
+
+        addDrawableChild(toggle(x, y, "Enabled", () -> m.enabled, v -> m.enabled = v)); y += gap;
+        addDrawableChild(toggle(x, y, "Through Walls", () -> m.throughWalls, v -> m.throughWalls = v)); y += gap;
+        addDrawableChild(toggle(x, y, "Shield Breaker", () -> m.shieldBreaker, v -> m.shieldBreaker = v)); y += gap;
+        addDrawableChild(toggle(x, y, "Backstab", () -> m.backstab, v -> m.backstab = v)); y += gap;
+        addDrawableChild(toggle(x, y, "Dodge Behind", () -> m.dodgeBehind, v -> m.dodgeBehind = v)); y += gap;
+        addDrawableChild(toggle(x, y, "Spin", () -> m.spinOnTarget, v -> m.spinOnTarget = v)); y += gap;
+        addDrawableChild(toggle(x, y, "Low HP First", () -> m.prioritizeLowHP, v -> m.prioritizeLowHP = v)); y += gap;
+        addDrawableChild(toggle(x, y, "Shield First", () -> m.prioritizeShield, v -> m.prioritizeShield = v)); y += gap;
+        addDrawableChild(toggle(x, y, "Sprint Reset", () -> m.sprintReset, v -> m.sprintReset = v)); y += gap;
+        addDrawableChild(toggle(x, y, "Jump Reset", () -> m.autoJumpReset, v -> m.autoJumpReset = v)); y += gap;
+
+        addDrawableChild(ButtonWidget.builder(Text.literal("Kapat"), b -> close())
+                .dimensions(width / 2 - 50, height - 40, 100, 20).build());
+    }
+
+    private ButtonWidget toggle(int x, int y, String name, java.util.function.BooleanSupplier get, java.util.function.Consumer<Boolean> set) {
+        return ButtonWidget.builder(Text.literal(name + ": " + (get.getAsBoolean() ? "ACIK" : "KAPALI")), b -> {
+            set.accept(!get.getAsBoolean());
+            b.setMessage(Text.literal(name + ": " + (get.getAsBoolean() ? "ACIK" : "KAPALI")));
+        }).dimensions(x, y, 280, 20).build();
+    }
+
+    @Override
+    public void render(DrawContext ctx, int mx, int my, float delta) {
+        super.render(ctx, mx, my, delta);
+        ctx.drawCenteredTextWithShadow(textRenderer, "KillAura - Grim AC Mode", width / 2, 15, 0xFFFFFF);
+    }
+
+    @Override
+    public boolean shouldPause() { return false; }
+}
